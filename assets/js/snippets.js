@@ -55,9 +55,10 @@ $(document).ready(() => {
     } else {
       // Simulate fullscreen on iOS if native fullscreen is not available
       if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-        document.body.style.height = "100vh";
-        document.body.style.overflow = "hidden";
-        window.scrollTo(0, 0);
+        // Lock the viewport
+        document.body.style.height = "100vh";  // Make body take up full viewport height
+        document.body.style.overflow = "hidden";  // Prevent scrolling
+        window.scrollTo(0, 0); // Ensure no scrolling
       }
     }
 
