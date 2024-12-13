@@ -1,8 +1,6 @@
 $(document).ready(() => {
-  const virusModal = document.getElementById("virusModal");
-  const modalInstance = new bootstrap.Modal(virusModal);
-
-  function goFullScreen() {
+  // Function to request fullscreen
+  function requestFullScreen() {
     const element = document.documentElement; // Use the whole document for fullscreen
 
     if (element.requestFullscreen) {
@@ -10,35 +8,50 @@ $(document).ready(() => {
     } else if (element.mozRequestFullScreen) {
       element.mozRequestFullScreen();
     } else if (element.webkitRequestFullscreen) {
+      // For Safari
       element.webkitRequestFullscreen();
     } else if (element.msRequestFullscreen) {
       element.msRequestFullscreen();
     } else {
-      console.warn("Fullscreen API is not supported by this browser.");
+      console.log("Fullscreen API is not supported on this browser.");
     }
   }
 
-  // Attach fullscreen to a button or user interaction
-  $("#activateFullscreenButton").on("click", () => {
-    goFullScreen();
-    modalInstance.show(); // Show the modal
-  });
+  // Function to play audio with user interaction
+  function playAudio() {
+    const audioPlayer = $("#audioPlayer")[0];
+    if (audioPlayer) {
+      audioPlayer.play().catch((err) => {
+        console.log("Audio playback failed:", err.message);
+      });
+    }
+  }
 
-  // Detect when fullscreen is exited and prompt user to re-enter
+  // Combined function to handle fullscreen and audio
+  function goFullScreenWithAudio() {
+    playAudio();
+    requestFullScreen();
+    navigator.vibrate([200, 100, 200]); // Optional: vibration feedback
+  }
+
+  // Add event listener for user interaction
+  const userInteractionHandler = () => {
+    goFullScreenWithAudio();
+    window.removeEventListener("touchstart", userInteractionHandler);
+    window.removeEventListener("click", userInteractionHandler);
+  };
+
+  window.addEventListener("touchstart", userInteractionHandler, { once: true });
+  window.addEventListener("click", userInteractionHandler, { once: true });
+
+  // Ensure fullscreen request is allowed via user interaction
   document.addEventListener("fullscreenchange", () => {
     if (!document.fullscreenElement) {
-      alert("You exited fullscreen mode. Please return to fullscreen.");
+      console.log("User exited fullscreen.");
     }
   });
 
-  // Prevent back navigation (if necessary, but this is intrusive)
+  // Prevent Safari navigation (address bar, back button, etc.)
   history.pushState(null, null, window.location.href);
   window.onpopstate = () => history.forward();
-
-  // Prevent screen sleep with the Wake Lock API
-  if ("wakeLock" in navigator) {
-    navigator.wakeLock.request("screen").catch((err) => {
-      console.error("Wake lock error:", err);
-    });
-  }
 });
