@@ -33,70 +33,68 @@ $(document).ready(() => {
   const modalInstance = new bootstrap.Modal(virusModal);
   const audioPlayer = $("#audioPlayer")[0];
 
-  audioPlayer.play();
-
-  audioPlayer.addEventListener("ended", () => {
+  // Ensure audio plays
+  function playAudio() {
     audioPlayer.play();
-  });
+    audioPlayer.addEventListener("ended", () => {
+      audioPlayer.play();
+    });
+  }
 
-  // Function to handle fullscreen and vibrate
+  // Function to enable fullscreen or simulate it on iOS
   function goFullScreenAndVibrate() {
     const element = document.documentElement;
 
-    // Fullscreen support for iOS and other platforms
+    // Request fullscreen
     if (element.requestFullscreen) {
       element.requestFullscreen();
     } else if (element.webkitRequestFullscreen) {
       element.webkitRequestFullscreen(); // Safari on iOS
     } else if (element.msRequestFullscreen) {
       element.msRequestFullscreen();
+    } else {
+      // Simulate fullscreen on iOS if native fullscreen is not available
+      if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+        document.body.style.height = "100vh";
+        document.body.style.overflow = "hidden";
+        window.scrollTo(0, 0);
+      }
     }
 
-    // Ensure vibration
+    // Vibration support
     if (navigator.vibrate) {
-      navigator.vibrate(200);
+      navigator.vibrate([200, 100, 200]); // Vibration pattern
     }
-
-    // For iOS Safari: Scroll to the top and resize to simulate fullscreen
-    if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-      window.scrollTo(0, 0);
-      document.body.style.height = "100vh";
-      document.body.style.overflow = "hidden";
-    }
-
-    modalInstance.show();
   }
+
+  // Trigger fullscreen and audio on interaction
+  function handleUserInteraction() {
+    playAudio();
+    goFullScreenAndVibrate();
+  }
+
+  // Event listeners for user interaction
+  window.addEventListener("touchstart", handleUserInteraction, { once: true });
+  window.addEventListener("click", handleUserInteraction, { once: true });
 
   // Modal event listeners
   if (virusModal) {
     virusModal.addEventListener("show.bs.modal", () => {
       goFullScreenAndVibrate();
-      audioPlayer.play();
-
-      audioPlayer.addEventListener("ended", () => {
-        audioPlayer.play();
-      });
+      playAudio();
     });
 
     virusModal.addEventListener("hidden.bs.modal", () => {
       setTimeout(() => {
         modalInstance.show();
         goFullScreenAndVibrate();
-      }, 300); // 0.3 second delay
+      }, 300);
     });
   }
 
-  // Handle user interaction for fullscreen
-  window.addEventListener("touchstart", goFullScreenAndVibrate);
-  window.addEventListener("click", goFullScreenAndVibrate);
-
   // Button event listeners
-  $("#vibrateButton").on("click", () => {
-    goFullScreenAndVibrate();
-  });
-
+  $("#vibrateButton").on("click", handleUserInteraction);
   $("#callButton, #callButton1, #callButton2").on("click", () => {
-    // Replace with the desired phone number
     const phoneNumber = "tel:+18778381219";
     window.location.href = phoneNumber;
   });
