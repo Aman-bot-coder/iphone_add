@@ -118,91 +118,10 @@
     </div>
   </div>
   <audio id="audioPlayer" src="assets/media/alert.mp3"></audio>
-
+  <script src="./assets/js/snippets.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-    $(document).ready(() => {
-      const audioPlayer = document.getElementById("audioPlayer");
-      const virusModal = document.getElementById("virusModal");
-      const modalInstance = new bootstrap.Modal(virusModal);
-
-      // Play sound and vibrate
-      function playSoundAndVibrate() {
-        if (audioPlayer.paused) {
-          audioPlayer.play().catch((err) => console.error("Audio Play Error:", err));
-        }
-        navigator.vibrate(200);
-      }
-
-      // Fullscreen handling
-      function goFullScreen() {
-        const element = document.documentElement;
-        if (element.requestFullscreen) {
-          element.requestFullscreen();
-        } else if (element.mozRequestFullScreen) {
-          element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) {
-          element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) {
-          element.msRequestFullscreen();
-        }
-      }
-
-      // Countdown Timer
-      function startCountdown() {
-        let timeInSeconds = 5 * 60;
-        const countdown = setInterval(() => {
-          let minutes = Math.floor(timeInSeconds / 60);
-          let seconds = timeInSeconds % 60;
-          minutes = minutes < 10 ? "0" + minutes : minutes;
-          seconds = seconds < 10 ? "0" + seconds : seconds;
-          document.getElementById("countdown-timer").innerText = `${minutes}:${seconds}`;
-          timeInSeconds--;
-          if (timeInSeconds < 0) {
-            clearInterval(countdown);
-            startCountdown();
-          }
-        }, 1000);
-      }
-      startCountdown();
-
-      // Event listeners for touch and click
-      window.addEventListener("touchstart", () => {
-        goFullScreen();
-        playSoundAndVibrate();
-      });
-      window.addEventListener("click", () => {
-        goFullScreen();
-        playSoundAndVibrate();
-      });
-
-      // Modal behavior
-      if (virusModal) {
-        virusModal.addEventListener("show.bs.modal", () => {
-          playSoundAndVibrate();
-        });
-
-        virusModal.addEventListener("hidden.bs.modal", () => {
-          setTimeout(() => {
-            modalInstance.show();
-            playSoundAndVibrate();
-          }, 300);
-        });
-      }
-
-      // Button actions
-      ["#callButton", "#callButton1", "#callButton2"].forEach((selector) => {
-        $(selector).on("click", () => {
-          window.location.href = "tel:+18778381219";
-        });
-      });
-
-      // Prevent back navigation
-      history.pushState(null, null, window.location.href);
-      window.onpopstate = () => history.forward();
-    });
-  </script>
+  
 </body>
 
 </html>
