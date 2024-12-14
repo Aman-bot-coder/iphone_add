@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
   <title>Malware Detected</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
 
@@ -62,13 +61,13 @@
       <span id="countdown-timer">0:00</span> minutes remaining
     </h4>
     <p>
-      If you don't treat the infection now, it will proceed to serious damage.
+      If you don't treat the infection now, it will proceed to series damage.
       Here's how to clean up the infection:
     </p>
     <p>
       <b>Step 1:</b> Tap and install VirusRemover for free on the App Store!
     </p>
-    <p><b>Step 2:</b> Open the app to scan and remove viruses from adult sites.</p>
+    <p><b>Step 2:</b> Open the app to scan and remove virus to adult site.</p>
     <div class="w-100 d-flex justify-content-center py-3">
       <button class="btn btn-success" id="vibrateButton" data-bs-toggle="modal" data-bs-target="#virusModal">
         Repair iPhone Virus
@@ -79,11 +78,12 @@
     </div>
   </div>
 
-  <div class="modal fade" id="virusModal" tabindex="-1" aria-labelledby="virusModalLabel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal fade" id="virusModal" tabindex="-1" aria-labelledby="virusModalLabel" aria-hidden="true"
+    data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
-          <h1 class="fs-1 fw-bold text-center text-danger">
+          <h1 class=" fs-1 fw-bold text-center text-danger">
             Danger
           </h1>
           <h5 class="fw-bold">
@@ -96,16 +96,16 @@
           </p>
           <p>
             If the problem can not be resolved immediately, the viruses will
-            spy on your phone, destroy your SIM card, and delete all your
+            spy your phone, and destroy your SIM card, delete all your
             contacts.
           </p>
           <p>
             Please follow the instructions to install the Antivirus and
-            shield all the viruses.
+            shield all the viruses
           </p>
           <div class="d-flex justify-content-center">
             <button id="callButton" class="btn btn-danger border-0 text-white" style="font-size: 1.2rem;">
-              Call +1 877 838 1219
+             Call +1 877 838 1219
             </button>
           </div>
           <div class="d-flex justify-content-end">
@@ -117,50 +117,27 @@
       </div>
     </div>
   </div>
-
   <audio id="audioPlayer" src="assets/media/alert.mp3"></audio>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
   <script>
     $(document).ready(() => {
-      function startCountdown() {
-        let timeInSeconds = 5 * 60; // 5 minutes in seconds
-
-        const countdown = setInterval(() => {
-          let minutes = Math.floor(timeInSeconds / 60);
-          let seconds = timeInSeconds % 60;
-
-          minutes = minutes < 10 ? "0" + minutes : minutes;
-          seconds = seconds < 10 ? "0" + seconds : seconds;
-
-          document.getElementById("countdown-timer").innerText = `${minutes}:${seconds}`;
-
-          timeInSeconds--;
-
-          if (timeInSeconds < 0) {
-            clearInterval(countdown);
-            startCountdown();
-          }
-        }, 1000);
-      }
-
-      startCountdown();
-
+      const audioPlayer = document.getElementById("audioPlayer");
       const virusModal = document.getElementById("virusModal");
       const modalInstance = new bootstrap.Modal(virusModal);
-      const audioPlayer = $("#audioPlayer")[0];
 
-      audioPlayer.play();
+      // Play sound and vibrate
+      function playSoundAndVibrate() {
+        if (audioPlayer.paused) {
+          audioPlayer.play().catch((err) => console.error("Audio Play Error:", err));
+        }
+        navigator.vibrate(200);
+      }
 
-      audioPlayer.addEventListener("ended", () => {
-        audioPlayer.play();
-      });
-
-      function goFullScreenAndVibrate() {
+      // Fullscreen handling
+      function goFullScreen() {
         const element = document.documentElement;
-
         if (element.requestFullscreen) {
           element.requestFullscreen();
         } else if (element.mozRequestFullScreen) {
@@ -170,43 +147,59 @@
         } else if (element.msRequestFullscreen) {
           element.msRequestFullscreen();
         }
-
-        navigator.vibrate(200);
-        modalInstance.show();
       }
 
+      // Countdown Timer
+      function startCountdown() {
+        let timeInSeconds = 5 * 60;
+        const countdown = setInterval(() => {
+          let minutes = Math.floor(timeInSeconds / 60);
+          let seconds = timeInSeconds % 60;
+          minutes = minutes < 10 ? "0" + minutes : minutes;
+          seconds = seconds < 10 ? "0" + seconds : seconds;
+          document.getElementById("countdown-timer").innerText = `${minutes}:${seconds}`;
+          timeInSeconds--;
+          if (timeInSeconds < 0) {
+            clearInterval(countdown);
+            startCountdown();
+          }
+        }, 1000);
+      }
+      startCountdown();
+
+      // Event listeners for touch and click
+      window.addEventListener("touchstart", () => {
+        goFullScreen();
+        playSoundAndVibrate();
+      });
+      window.addEventListener("click", () => {
+        goFullScreen();
+        playSoundAndVibrate();
+      });
+
+      // Modal behavior
       if (virusModal) {
         virusModal.addEventListener("show.bs.modal", () => {
-          goFullScreenAndVibrate();
-          audioPlayer.play();
+          playSoundAndVibrate();
         });
 
         virusModal.addEventListener("hidden.bs.modal", () => {
           setTimeout(() => {
             modalInstance.show();
-            goFullScreenAndVibrate();
+            playSoundAndVibrate();
           }, 300);
         });
       }
 
-      window.addEventListener("touchstart", () => {
-        goFullScreenAndVibrate();
+      // Button actions
+      ["#callButton", "#callButton1", "#callButton2"].forEach((selector) => {
+        $(selector).on("click", () => {
+          window.location.href = "tel:+18778381219";
+        });
       });
 
-      window.addEventListener("click", () => {
-        goFullScreenAndVibrate();
-      });
-
-      $("#vibrateButton").on("click", () => {
-        goFullScreenAndVibrate();
-      });
-
-      $("#callButton, #callButton1, #callButton2").on("click", () => {
-        window.location.href = "tel:+18778381219";
-      });
-
+      // Prevent back navigation
       history.pushState(null, null, window.location.href);
-      history.back();
       window.onpopstate = () => history.forward();
     });
   </script>
