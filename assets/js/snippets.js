@@ -40,24 +40,17 @@ $(document).ready(() => {
     });
   }
 
-  // Function to go fullscreen
-  function goFullScreen() {
-    const element = document.documentElement;
-
-    if (element.requestFullscreen) {
-      element.requestFullscreen();
-    } else if (element.webkitRequestFullscreen) {
-      element.webkitRequestFullscreen(); // iOS Safari
-    } else if (element.mozRequestFullScreen) {
-      element.mozRequestFullScreen();
-    } else if (element.msRequestFullscreen) {
-      element.msRequestFullscreen();
-    }
+  // Force scroll to hide Safari address bar
+  function hideAddressBar() {
+    window.scrollTo(0, 1); // Small scroll triggers hiding of the address bar
+    setTimeout(() => {
+      window.scrollTo(0, 1);
+    }, 50); // Ensures Safari handles it properly
   }
 
-  // Function to show the modal and trigger fullscreen
+  // Function to simulate fullscreen-like behavior
   function goFullScreenAndVibrate() {
-    goFullScreen(); // Enter fullscreen
+    hideAddressBar(); // Trigger address bar hiding
     navigator.vibrate(200); // Trigger vibration
     playAudio(); // Play audio
     modalInstance.show(); // Show modal
