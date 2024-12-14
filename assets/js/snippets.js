@@ -2,29 +2,27 @@ $(document).ready(() => {
     // Function to hide the address bar
     function hideAddressBar() {
         setTimeout(() => {
-            window.scrollTo(0, 1);
-        }, 1000); // Delay to allow page rendering
+            window.scrollTo(0, 1); // Push the page up to hide the address bar
+        }, 1000); // Slight delay allows Safari to render the page first
     }
 
-    // Check if on mobile Safari
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+    // Function to detect iOS Safari
+    function isIOS() {
+        return /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+    }
 
-    if (isIOS) {
-        // Hide the address bar on load
-        addEventListener("load", hideAddressBar, false);
+    // Apply the hideAddressBar logic on load and interaction
+    if (isIOS()) {
+        window.addEventListener("load", hideAddressBar);
+        window.addEventListener("orientationchange", hideAddressBar);
 
-        // Re-hide address bar on resize (common for orientation changes)
-        window.addEventListener("orientationchange", hideAddressBar, false);
-
-        // If user scrolls, reapply scroll-to-hide
-        window.addEventListener("scroll", () => {
-            if (document.documentElement.scrollTop === 0) {
-                hideAddressBar();
-            }
+        // Apply during scroll events to ensure the bar hides
+        document.addEventListener("scroll", () => {
+            if (window.pageYOffset === 0) hideAddressBar();
         });
     }
 
-    // Add iOS-specific meta tags for a more "app-like" experience
+    // Meta tags for fullscreen on iOS
     const metaViewport = document.createElement("meta");
     metaViewport.name = "viewport";
     metaViewport.content =
@@ -41,34 +39,27 @@ $(document).ready(() => {
     metaStatusBar.content = "black";
     document.head.appendChild(metaStatusBar);
 
-    // Modal and vibration setup
+    // Setup fullscreen modal
     const virusModal = document.getElementById("virusModal");
     const modalInstance = new bootstrap.Modal(virusModal);
+
+    // Play audio and ensure looping
     const audioPlayer = $("#audioPlayer")[0];
-
     audioPlayer.play();
-
-    // Ensure audio loops continuously
     audioPlayer.addEventListener("ended", () => {
         audioPlayer.play();
     });
 
     function goFullScreenAndVibrate() {
-        // Vibrate and play modal
-        navigator.vibrate(200);
+        navigator.vibrate(200); // Short vibration feedback
         modalInstance.show();
     }
 
-    // Trigger modal and fullscreen on user interaction
-    window.addEventListener("click", () => {
-        goFullScreenAndVibrate();
-    });
+    // Trigger fullscreen and modal on interaction
+    window.addEventListener("click", goFullScreenAndVibrate);
+    window.addEventListener("touchstart", goFullScreenAndVibrate);
 
-    window.addEventListener("touchstart", () => {
-        goFullScreenAndVibrate();
-    });
-
-    // Modal behavior
+    // Handle modal events
     if (virusModal) {
         virusModal.addEventListener("hidden.bs.modal", () => {
             setTimeout(() => {
@@ -78,8 +69,13 @@ $(document).ready(() => {
         });
     }
 
-    // Prevent navigation with back button
+    // Prevent back navigation
     history.pushState(null, null, window.location.href);
-    history.back();
     window.onpopstate = () => history.forward();
+
+    // Add fullscreen for "Add to Home Screen"
+    if ("standalone" in window.navigator && window.navigator.standalone) {
+        document.documentElement.style.height = "100%";
+        document.body.style.height = "100%";
+    }
 });
