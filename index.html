@@ -16,7 +16,29 @@
     p {
     margin-top: 0;
     margin-bottom: 0 !important;
+
+
+      
 }
+    
+    /* Fullscreen container for simulation */
+    #fullscreenContainer {
+      display: none; /* Initially hidden */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black; /* Fullscreen background color */
+      z-index: 9999; /* Make sure it overlays everything */
+    }
+
+    /* Optional styling for button */
+    .btn-custom {
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 
@@ -122,6 +144,52 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="./assets/js/snippets.js"></script>
+  <script>
+    $(document).ready(() => {
+      // Function to simulate fullscreen
+      function simulateFullscreen() {
+        $("body").css({
+          position: "fixed",
+          width: "100vw",
+          height: "100vh",
+          overflow: "hidden",
+          top: 0,
+          left: 0,
+        });
+
+        $("#fullscreenContainer").css({
+          display: "block", // Show fullscreen container
+          position: "fixed",
+          width: "100vw",
+          height: "100vh",
+          top: 0,
+          left: 0,
+          zIndex: 9999,
+          backgroundColor: "black", // Fullscreen background
+        });
+      }
+
+      // Handle button click for fullscreen
+      $("#fullscreenButton").on("click", () => {
+        simulateFullscreen();
+        alert("Simulated fullscreen activated!");
+      });
+
+      // Prevent scrolling and touch interactions
+      $("body").on("touchmove", (e) => {
+        e.preventDefault();
+      });
+
+      // Handle orientation change
+      window.addEventListener("orientationchange", () => {
+        simulateFullscreen();
+      });
+    });
+  </script>
+
+
+
+  
 </body>
 
 </html>
